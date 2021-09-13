@@ -158,10 +158,10 @@ func Test(t *testing.T) {
 21. 外部可见的属性必须是首字母大写，当转换到json数据是跟预期有偏差，必须添加json标签，如下：
 ```go
 type CMD struct{
-        Cmd string `json:"cmd"`
-        Data Data `json:"data"`
-        UserId string `json:"userId"`
-    }
+  Cmd string `json:"cmd"`
+  Data Data `json:"data"`
+  UserId string `json:"userId"`
+}
 ```
 22. 包的循环引用编译错误，解决方法：提取公共部分到独立的包或者定义接口依赖注入。
 
@@ -308,20 +308,20 @@ for i:= uint8(10);i>=0;i--{
 45. 删除切片的指定下标元素
 - 低效的做法
 ``` go
-		for j := 0; j < len(array); j++ {
-			if INDEX == j {
-				array = append(array[:j], array[j+1:]...)
-				break
-			}
-		}
+for j := 0; j < len(array); j++ {
+  if INDEX == j {
+    array = append(array[:j], array[j+1:]...)
+    break
+  }
+}
 ```
 - 高效的做法
 ``` go
-		
-			for j :=INDEX; j < len(array)-1; j++ {
-				array[j] = array[j+1]
-			}
-			array = array[:len(array)-1]
-	
+
+for j :=INDEX; j < len(array)-1; j++ {
+  array[j] = array[j+1]
+}
+array = array[:len(array)-1]
+
 ```
 
