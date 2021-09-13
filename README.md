@@ -6,29 +6,29 @@
 3. interface　作为两个成员实现，一个是类型和一个值，`var x interface{} = (*interface{})(nil)`　接口指针x不等于nil  。下面一段代码深入展示：
 ```go
 type User struct {
-    Id   int
-    Name string
-    Tester
+  Id   int
+  Name string
+  Tester
 }
 type Tester interface {
-    Test()
+  Test()
 }
 func (this *User) Test() {
-	fmt.Println(this)
+  fmt.Println(this)
 }
 func create() Tester {
-    var x *User = nil
-    return x
+  var x *User = nil
+  return x
 }
 func Test(t *testing.T) {
-    var x Tester = create()
-    if x != nil {
-       t.Log("not nil ")
-    }
-    var u *User = x.(*User)
-    if u == nil {
-       t.Log("nil ")
-    }
+  var x Tester = create()
+  if x != nil {
+    t.Log("not nil ")
+  }
+  var u *User = x.(*User)
+  if u == nil {
+    t.Log("nil ")
+  }
 }
 ```
 
@@ -53,17 +53,17 @@ recover的用法,recover可以让进入令人恐慌的流程中的goroutine恢�
 13. 闭包要注意循环调用时，upvalue值一不留意可能只是循环退出的值。如下代码：
 ```go
 func Test(t *testing.T) {
-    var data int
-    for i:= 0;i<10;i++{
+  var data int
+  for i:= 0;i<10;i++{
     data ++
-        go func(){
-            listen2(data)
-        }()
-    }
-    <- time.After(time.Second)
+    go func(){
+      listen2(data)
+    }()
+  }
+  <- time.After(time.Second)
 }
 func listen2(data int) {
-    fmt.Print( data)
+  fmt.Print( data)
 }
 ```
 >  输出：`26101010101010106`，跟你期望的输出可能不一样。
@@ -78,13 +78,13 @@ func listen2(data int) {
 17. go线程的调用时机是由go runtime决定的。
 ```go
 func Test(t *testing.T) {
-	for i:= 0;i<10;i++{
-		go listen2(i)
-	}
-	<- time.After(time.Second)
+  for i:= 0;i<10;i++{
+    go listen2(i)
+  }
+  <- time.After(time.Second)
 }
 func listen2(data int) {
-	fmt.Print( data)
+  fmt.Print( data)
 }
 ```
 >  输出：`3456781209`
@@ -96,41 +96,41 @@ func listen2(data int) {
 ```go
 // 错误的做法
 func Test_Select_Chan(t *testing.T) {
-	readerChannel:= make(chan int )
-	go func(readerChannel chan int ) {
-		for {
-			select {
-			// 判断管道是否关闭
-			case _, ok := <-readerChannel:
-				if !ok {
-					break
-				}
-			}
-			t.Log("for")
-		}
-	}(readerChannel)
-	close(readerChannel)
-	<- time.After(time.Second*2)
+  readerChannel:= make(chan int )
+  go func(readerChannel chan int ) {
+    for {
+      select {
+        // 判断管道是否关闭
+        case _, ok := <-readerChannel:
+        if !ok {
+          break
+        }
+      }
+      t.Log("for")
+    }
+  }(readerChannel)
+  close(readerChannel)
+  <- time.After(time.Second*2)
 }
 // 正确的做法
 func Test_Select_Chan1(t *testing.T) {
-	readerChannel:= make(chan int )
-	go func(readerChannel chan int ) {
-		for {
-			select {
-			// 判断管道是否关闭
-			case _, ok := <-readerChannel:
-				if !ok {
-					goto BB
-					//return
-				}
-			}
-			t.Log("for")
-		}
-	BB:
-	}(readerChannel)
-	close(readerChannel)
-	<- time.After(time.Second*2)
+  readerChannel:= make(chan int )
+  go func(readerChannel chan int ) {
+    for {
+      select {
+        // 判断管道是否关闭
+        case _, ok := <-readerChannel:
+        if !ok {
+          goto BB
+          //return
+        }
+      }
+      t.Log("for")
+    }
+    BB:
+  }(readerChannel)
+  close(readerChannel)
+  <- time.After(time.Second*2)
 }
 ```
 for select 组合不带标签的break语法是跳不出循环，如果要跳出循环，要设置goto 标签或者直接return返回。
@@ -140,17 +140,17 @@ for select 组合不带标签的break语法是跳不出循环，如果要跳出�
 var list []mydata
 var hash map[string]mydata
 type mydata struct {
-    A int
+  A int
 }
 func Test(t *testing.T) {
-	list = make([]mydata, 1)
-	data := list[0]
-	data.A = 10
-	hash = make(map[string]mydata)
-	hash["test"] = mydata{}
-	data = hash["test"]
-	data.A = 10
-	t.Log(list[0].A, hash["test"].A)
+  list = make([]mydata, 1)
+  data := list[0]
+  data.A = 10
+  hash = make(map[string]mydata)
+  hash["test"] = mydata{}
+  data = hash["test"]
+  data.A = 10
+  t.Log(list[0].A, hash["test"].A)
 }
 ```
 >  输出：`0 0`
@@ -168,22 +168,22 @@ type CMD struct{
 23. `return XXX`不是一条原子指令：
 ```go
 func Test(t *testing.T) {
-	t.Log(test())
-	t.Log(test1())
+  t.Log(test())
+  t.Log(test1())
 }
 func test() (result int) {
-	defer func() {
-		result++
-	}()
-	return 1
+  defer func() {
+    result++
+  }()
+  return 1
 }
 
 func test1() (result int) {
-	t := 5
-	defer func() {
-		t = t + 5
-	}()
-	return t
+  t := 5
+  defer func() {
+    t = t + 5
+  }()
+  return t
 }
 ```
 >  输出：
@@ -195,7 +195,7 @@ func test1() (result int) {
 ```go
 result = 1
 func()(result int){
-    result ++
+  result ++
 }()
 return
 ```
@@ -206,7 +206,7 @@ list := []int{12, 1242, 35, 23, 534, 23, 1}
 listNew := make([]int, 1, len(list))
 copy(listNew, list)
 for i := 0; i < len(listNew); i++ {
-fmt.Println(listNew[i])
+  fmt.Println(listNew[i])
 }
 ```
 >  输出：`12`
@@ -228,17 +228,17 @@ fmt.Println(listNew2[1])
 
 ```go
 func Benchmark_aa(b *testing.B) {
-	very_long_string:= ""
-	for i := 0; i < b.N; i++ {
-		very_long_string += "test " + "and test "
-	}
+  very_long_string:= ""
+  for i := 0; i < b.N; i++ {
+    very_long_string += "test " + "and test "
+  }
 }
 func Benchmark_bb(b *testing.B) {
-	very_long_string:= []byte{}
-	for i := 0; i < b.N; i++ {
-		very_long_string = append(very_long_string,[]byte("test ")...)
-		very_long_string = append(very_long_string,[]byte("and test ")...)
-	}
+  very_long_string:= []byte{}
+  for i := 0; i < b.N; i++ {
+    very_long_string = append(very_long_string,[]byte("test ")...)
+    very_long_string = append(very_long_string,[]byte("and test ")...)
+  }
 }
 ```
 >  输出：
@@ -266,17 +266,17 @@ func Benchmark_bb(b *testing.B) {
 type S struct {
 }
 func (this S)String()  string{
-	return fmt.Sprint( "S struct: ",this )
+  return fmt.Sprint( "S struct: ",this )
 }
 func Test_print(t *testing.T)  {
-	var s S
-	t.Log(s.String())
+  var s S
+  t.Log(s.String())
 }
 ```
 34.循环语句里正整型迭代值边界问题，迭代值边界递减到负值，下面的代码会进入死循环：
 ```go
 for i:= uint8(10);i>=0;i--{
-	t.Log(i)
+  t.Log(i)
 }
 ```
 
